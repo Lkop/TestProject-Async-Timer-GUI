@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29609.76
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestProjectAsyncUITimer", "TestProjectAsyncUITimer.csproj", "{82CDE009-3702-47B1-A70D-C628AEE85F74}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{82CDE009-3702-47B1-A70D-C628AEE85F74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{82CDE009-3702-47B1-A70D-C628AEE85F74}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{82CDE009-3702-47B1-A70D-C628AEE85F74}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{82CDE009-3702-47B1-A70D-C628AEE85F74}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C2F6F68D-42CD-4A2E-B48B-D859CBEE9B32}
+	EndGlobalSection
+EndGlobal
