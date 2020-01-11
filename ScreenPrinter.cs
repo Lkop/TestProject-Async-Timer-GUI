@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace TestProjectAsyncUITimer{
 
-    class Printer{
+    class ScreenPrinter{
 
-        public Printer(MainWindow main_window) {
+        public ScreenPrinter(MainWindow main_window) {
 
             int x = 0;
 

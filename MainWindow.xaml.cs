@@ -114,22 +114,21 @@ namespace TestProjectAsyncUITimer
             });  
         }
 
-        public void OnTaskComplete(string text)
-        {
+        public void OnTaskComplete(string text){
+
             MessageBox.Show(text, "BLA BLA BLA", MessageBoxButton.OK, MessageBoxImage.Information);
             enableButtons();
         }
 
-        private void ThreadPoolProcess()
-        {
-            for (int i = 0; i < Define.TIMES; i++)
-            {
-                new Printer(this);
+        private void ThreadPoolProcess(){
+
+            for (int i = 0; i < Define.TIMES; i++){
+                new ScreenPrinter(this);
             }
         }
 
-        private void start_pb_Click(object sender, RoutedEventArgs e)
-        {
+        private void start_pb_Click(object sender, RoutedEventArgs e){
+
             if (worker.IsBusy == false){
 
                 disableButtons();
@@ -144,8 +143,8 @@ namespace TestProjectAsyncUITimer
             }
         }
 
-        private void cancel_pb_Click(object sender, RoutedEventArgs e)
-        {
+        private void cancel_pb_Click(object sender, RoutedEventArgs e){
+
             if (worker.IsBusy){
 
                 worker.CancelAsync();
@@ -154,17 +153,21 @@ namespace TestProjectAsyncUITimer
             }
         }
 
-        void worker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            for (int i = 0; i < Define.TIMES; i++)
-            {
-                if (i % (Define.TIMES/100) == 0) {
-                    (sender as BackgroundWorker).ReportProgress((int)((double)i / Define.TIMES * 100));
-                    new Printer(this);
-                }
+        void worker_DoWork(object sender, DoWorkEventArgs e){
 
-                if (worker.CancellationPending)
-                {
+            FilePrinter printer = new FilePrinter(Define.FILENAME);
+
+            printer.create();
+
+            for (int i = 0; i < Define.TIMES; i++) {
+
+                if (i % (Define.TIMES/100) == 0)
+                    (sender as BackgroundWorker).ReportProgress((int)((double)i / Define.TIMES * 100));
+
+                printer.append(i+1);
+
+                if (worker.CancellationPending) {
+
                     // Set the Cancel flag so that the WorkerCompleted event knows that the process was cancelled.
                     e.Cancel = true;
                     worker.ReportProgress(0);
@@ -175,34 +178,43 @@ namespace TestProjectAsyncUITimer
                         start_pb.IsEnabled = true;
                         cancel_pb.IsEnabled = false;
                     });
+
                     return;
                 }
             }
             worker.ReportProgress(100);
         }
 
-        void worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
+        void worker_ProgressChanged(object sender, ProgressChangedEventArgs e) {
+
             pb.Value = e.ProgressPercentage;
         }
 
-        void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e){
-            
-            if (e.Cancelled){
+        void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
+
+            if (e.Cancelled) {
                 pb_text.Foreground = Brushes.Red;
                 pb_text.Text = "Job Cancelled...";
 
                 enableButtons();
 
-            }else if (e.Error != null){
+            } else if (e.Error != null) {
                 pb_text.Foreground = Brushes.Red;
                 pb_text.Text = "Error occured!";
 
-            }else{
+            } else {
                 pb_text.Foreground = Brushes.Green;
                 pb_text.Text = "Job Completed!";
 
-                OnTaskComplete("Threadpooling completed successfully" + "\n Watch ticks: " + stopwatch.ElapsedTicks);
+                OnTaskComplete(Define.PATH + "\\" + Define.FILENAME + "\n\n Watch ticks: " + stopwatch.ElapsedTicks);
+
+                using (Process myProcess = new Process())
+                {
+                    myProcess.StartInfo.UseShellExecute = true;
+                    myProcess.StartInfo.FileName = Define.PATH + "\\" + Define.FILENAME;
+
+                    myProcess.Start();
+                }
             }
 
             start_pb.IsEnabled = true;

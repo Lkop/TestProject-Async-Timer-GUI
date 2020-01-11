@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 
 namespace TestProjectAsyncUITimer{
    
-    static class Define{
+    class Define{
 
-        public const int TIMES = 100000000;
+        public const int TIMES = 10000;
+
+        public static readonly string PATH = Directory.GetCurrentDirectory();
+        public const string FILENAME = "MyFile.txt";
+
     }
 }
