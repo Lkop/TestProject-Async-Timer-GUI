@@ -158,11 +158,10 @@ namespace TestProjectAsyncUITimer
         {
             for (int i = 0; i < Define.TIMES; i++)
             {
-                (sender as BackgroundWorker).ReportProgress((int)((double)i/Define.TIMES*100));
-
-                //Thread.Sleep(100);
-
-                new Printer(this);
+                if (i % (Define.TIMES/100) == 0) {
+                    (sender as BackgroundWorker).ReportProgress((int)((double)i / Define.TIMES * 100));
+                    new Printer(this);
+                }
 
                 if (worker.CancellationPending)
                 {

@@ -8,6 +8,6 @@ namespace TestProjectAsyncUITimer{
    
     static class Define{
 
-        public const int TIMES = 10000;
+        public const int TIMES = 100000000;
     }
 }
