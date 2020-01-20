@@ -23,9 +23,18 @@ namespace TestProjectAsyncUITimer
     /// </summary>
     public partial class MainWindow : Window
     {
-        BackgroundWorker worker;
+        private FilePrinter printer = new FilePrinter(Define.FILENAME);
+
+        private BackgroundWorker worker;
+        private Stopwatch stopwatch = new Stopwatch();
+
+        private SynchronizationContext sc = SynchronizationContext.Current;
+        private Thread thread = null;
+        private bool abort_thread = false;
+
         public delegate void OnTaskCompleteDelegate(string text);
-        Stopwatch stopwatch = new Stopwatch();
+
+        public delegate void OnThreadFinishDelegate();
 
         public MainWindow()
         {
@@ -64,7 +73,7 @@ namespace TestProjectAsyncUITimer
 
         private void button1_Click(object sender, RoutedEventArgs e)
         {
-             OnTaskCompleteDelegate callback = new OnTaskCompleteDelegate(OnTaskComplete);
+            OnTaskCompleteDelegate callback = new OnTaskCompleteDelegate(OnTaskComplete);
 
             disableButtons();
 
@@ -136,6 +145,8 @@ namespace TestProjectAsyncUITimer
                 start_pb.IsEnabled = false;
                 cancel_pb.IsEnabled = true;
 
+                start_pb_2.IsEnabled = false;
+
                 stopwatch.Reset();
                 stopwatch.Start();
 
@@ -154,9 +165,7 @@ namespace TestProjectAsyncUITimer
         }
 
         void worker_DoWork(object sender, DoWorkEventArgs e){
-
-            FilePrinter printer = new FilePrinter(Define.FILENAME);
-
+       
             printer.create();
 
             for (int i = 0; i < Define.TIMES; i++) {
@@ -177,6 +186,8 @@ namespace TestProjectAsyncUITimer
                     {
                         start_pb.IsEnabled = true;
                         cancel_pb.IsEnabled = false;
+
+                        start_pb_2.IsEnabled = true;
                     });
 
                     return;
@@ -208,17 +219,102 @@ namespace TestProjectAsyncUITimer
 
                 OnTaskComplete(Define.PATH + "\\" + Define.FILENAME + "\n\n Watch ticks: " + stopwatch.ElapsedTicks);
 
-                using (Process myProcess = new Process())
-                {
-                    myProcess.StartInfo.UseShellExecute = true;
-                    myProcess.StartInfo.FileName = Define.PATH + "\\" + Define.FILENAME;
-
-                    myProcess.Start();
-                }
+                openFile();
             }
 
             start_pb.IsEnabled = true;
             cancel_pb.IsEnabled = false;
+
+            start_pb_2.IsEnabled = true;
+        }
+
+        private void start_pb_Click_2(object sender, RoutedEventArgs e)
+        {
+            OnThreadFinishDelegate finish_callback = new OnThreadFinishDelegate(onFinish);
+
+            disableButtons();
+
+            start_pb_2.IsEnabled = false;
+            cancel_pb_2.IsEnabled = true;
+
+            start_pb.IsEnabled = false;
+
+            abort_thread = false;
+
+            thread = new Thread(()=> {
+
+                for (int i = 0; i < Define.TIMES; i++)
+                {
+                    if (abort_thread == true)
+                        return;
+
+                    if (i % (Define.TIMES / 100) == 0)
+                    {
+
+                        sc.Post(new SendOrPostCallback(o =>
+                        {
+                            pb_2.Value = (int)((double)i / Define.TIMES * 100);
+
+                        }), null);
+                    }
+                    
+                    printer.append(i + 1);
+                }
+
+                finish_callback();
+
+            });
+
+            thread.Start();
+        }
+
+        private void cancel_pb_Click_2(object sender, RoutedEventArgs e)
+        {
+
+            //Instead of using thread.Abort(); we use abort_thread_flag beacuse its safer for many reasons
+            abort_thread = true;
+
+            //main thread waits worker thread to end
+            //thread.Join();
+
+            pb_2.Value = 0;
+
+            start_pb_2.IsEnabled = true;
+            cancel_pb_2.IsEnabled = false;
+
+            start_pb.IsEnabled = true;
+        }
+
+        private void onFinish()
+        {
+
+            sc.Post(new SendOrPostCallback(o =>
+            {
+                pb_2.Value = 100;
+
+                enableButtons();
+
+                start_pb_2.IsEnabled = true;
+                cancel_pb_2.IsEnabled = false;
+
+                start_pb.IsEnabled = true;
+
+            }), null);
+
+            MessageBox.Show(Define.PATH + "\\" + Define.FILENAME + "\n\n", "BLA BLA BLA", MessageBoxButton.OK, MessageBoxImage.Information);
+
+            openFile();
+        }
+
+        private void openFile() {
+
+            using (Process myProcess = new Process())
+            {
+                myProcess.StartInfo.UseShellExecute = true;
+                myProcess.StartInfo.FileName = Define.PATH + "\\" + Define.FILENAME;
+
+                myProcess.Start();
+            }
         }
     }
 }

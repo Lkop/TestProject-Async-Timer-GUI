@@ -11,6 +11,7 @@ namespace TestProjectAsyncUITimer {
     public class FilePrinter {
 
         string filename;
+        StreamWriter sw;
 
         public FilePrinter(string filename) {
 
@@ -21,13 +22,12 @@ namespace TestProjectAsyncUITimer {
 
             //using open and closes the file automatically
             using (File.Create(filename));
-
         }
 
         public void append(int num) {
 
-            using (StreamWriter sw = File.AppendText(filename)) {
-
+            using (sw = File.AppendText(filename))
+            {
                 sw.WriteLine(num);
             }
         }

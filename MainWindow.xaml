@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TestProjectAsyncUITimer"
         mc:Ignorable="d"
-        Title="BLA BLA BLA" Width="800" Height="400">
+        Title="BLA BLA BLA" Width="800" Height="550">
     <StackPanel>
 
         <!--<StackPanel>
@@ -45,9 +45,32 @@
             </Grid>
             
             <Grid>
-                <TextBlock x:Name="pb_text" FontSize="50px" HorizontalAlignment="Center"></TextBlock>
+                <TextBlock x:Name="pb_text" FontSize="50px" HorizontalAlignment="Center">aa</TextBlock>
             </Grid>
             
+        </StackPanel>
+        
+        <StackPanel Margin="20">
+            <Grid Margin="20">
+                <ProgressBar Minimum="0" Maximum="100" Name="pb_2" Height="20"/>
+                <TextBlock Text="{Binding ElementName=pb_2, Path=Value, StringFormat={}{0:0}%}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Grid>
+
+            <Grid Margin="20,0,20,0">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+
+                <Button x:Name="start_pb_2" Click="start_pb_Click_2">Start</Button>
+                <Button Grid.Column="1" x:Name="cancel_pb_2" Click="cancel_pb_Click_2" IsEnabled="False">Cancel</Button>
+            </Grid>
+
+            <Grid>
+                <TextBlock x:Name="pb_text_2" FontSize="50px" HorizontalAlignment="Center">aa</TextBlock>
+            </Grid>
+
         </StackPanel>
     </StackPanel>
 </Window>
